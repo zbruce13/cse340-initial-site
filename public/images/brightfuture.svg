@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100">
+  <rect width="240" height="100" rx="16" fill="#e5f2eb"/>
+  <circle cx="42" cy="42" r="22" fill="#176b4d"/>
+  <path d="M42 24 L47 37 L61 37 L50 46 L54 60 L42 51 L30 60 L34 46 L23 37 L37 37 Z" fill="white"/>
+  <text x="75" y="40" font-family="Arial" font-size="15" font-weight="bold" fill="#104c37">Bright Future</text>
+  <text x="75" y="59" font-family="Arial" font-size="12" fill="#104c37">Education</text>
+</svg>

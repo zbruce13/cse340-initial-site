@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100">
+  <rect width="240" height="100" rx="16" fill="#edf4df"/>
+  <circle cx="42" cy="42" r="22" fill="#426b32"/>
+  <path d="M42 57 C20 43 30 25 48 29 C54 41 49 51 42 57 Z" fill="white"/>
+  <path d="M42 57 C42 43 53 33 61 37 C60 48 51 56 42 57 Z" fill="#bde3a3"/>
+  <text x="75" y="40" font-family="Arial" font-size="15" font-weight="bold" fill="#355427">Green Harvest</text>
+  <text x="75" y="59" font-family="Arial" font-size="12" fill="#355427">Community</text>
+</svg>
