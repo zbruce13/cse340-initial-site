@@ -1,24 +1,35 @@
-<%- include('partials/header') %>
-<section class="page-intro">
-  <p class="eyebrow">Take action</p>
-  <h1><%= title %></h1>
-  <p>Here are some sample opportunities to serve your community.</p>
-</section>
-<section class="card-grid">
-  <article class="card">
-    <h2>Park Cleanup</h2>
-    <p>Help clean parks and care for shared outdoor spaces.</p>
-    <span class="tag">Environmental</span>
-  </article>
-  <article class="card">
-    <h2>Community Tutoring</h2>
-    <p>Help learners develop skills and confidence.</p>
-    <span class="tag">Educational</span>
-  </article>
-  <article class="card">
-    <h2>Food and Essentials Drive</h2>
-    <p>Collect essential items for people in need.</p>
-    <span class="tag">Community Service</span>
-  </article>
-</section>
+
+<%- include('partials/header', { title: title }) %>
+
+<main class="page-content">
+  <section class="page-intro">
+    <p class="eyebrow">Take action</p>
+    <h1><%= title %></h1>
+    <p>Explore opportunities to serve your community.</p>
+  </section>
+
+  <section class="card-grid">
+    <% if (projects && projects.length > 0) { %>
+      <% projects.forEach((project) => { %>
+        <article class="card">
+          <h2><%= project.project_name %></h2>
+          <p><%= project.description || "No description available." %></p>
+          <p>
+            Organization:
+            <%= project.organization_name || "Unassigned" %>
+          </p>
+          <p>
+            Categories:
+            <%= Array.isArray(project.categories)
+              ? project.categories.join(", ")
+              : "None" %>
+          </p>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No projects found.</p>
+    <% } %>
+  </section>
+</main>
+
 <%- include('partials/footer') %>

@@ -1,24 +1,25 @@
-<%- include('partials/header') %>
-<section class="page-intro">
-  <p class="eyebrow">Working together</p>
-  <h1><%= title %></h1>
-  <p>Meet our sample community partners.</p>
-</section>
-<section class="card-grid">
-  <article class="card">
-    <img src="/images/brightfuture.svg" alt="Bright Future Education logo">
-    <h2>Bright Future Education</h2>
-    <p>Supporting learners through tutoring, mentoring, and educational resources.</p>
-  </article>
-  <article class="card">
-    <img src="/images/greenharvest.svg" alt="Green Harvest Community logo">
-    <h2>Green Harvest Community</h2>
-    <p>Encouraging environmental care through cleanups and community gardens.</p>
-  </article>
-  <article class="card">
-    <img src="/images/unityserve.svg" alt="Unity Serve Network logo">
-    <h2>Unity Serve Network</h2>
-    <p>Connecting volunteers with local community support opportunities.</p>
-  </article>
-</section>
+
+<%- include('partials/header', { title: title }) %>
+
+<main class="page-content">
+  <section class="page-intro">
+    <p class="eyebrow">Working together</p>
+    <h1><%= title %></h1>
+    <p>Meet our community partners.</p>
+  </section>
+
+  <section class="card-grid">
+    <% if (organizations && organizations.length > 0) { %>
+      <% organizations.forEach((organization) => { %>
+        <article class="card">
+          <h2><%= organization.organization_name %></h2>
+          <p><%= organization.description || "No description available." %></p>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No organizations found.</p>
+    <% } %>
+  </section>
+</main>
+
 <%- include('partials/footer') %>
