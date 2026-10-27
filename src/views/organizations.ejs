@@ -1,4 +1,4 @@
-
+```ejs
 <%- include('partials/header', { title: title }) %>
 
 <main class="page-content">
@@ -10,8 +10,16 @@
 
   <section class="card-grid">
     <% if (organizations && organizations.length > 0) { %>
-      <% organizations.forEach((organization) => { %>
+      <% organizations.forEach((organization, index) => { %>
         <article class="card">
+          <% if (index === 0) { %>
+            <img src="/images/brightfuture.svg" alt="Bright Future Education logo">
+          <% } else if (index === 1) { %>
+            <img src="/images/greenharvest.svg" alt="Green Harvest Community logo">
+          <% } else if (index === 2) { %>
+            <img src="/images/unityserve.svg" alt="Unity Serve Network logo">
+          <% } %>
+
           <h2><%= organization.organization_name %></h2>
           <p><%= organization.description || "No description available." %></p>
         </article>
@@ -23,3 +31,4 @@
 </main>
 
 <%- include('partials/footer') %>
+```
