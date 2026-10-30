@@ -1,18 +1,19 @@
-
 import pool from "./database.js";
 
 const getProjects = async () => {
   const result = await pool.query(
     `SELECT
-       p.project_id,
-       p.project_name,
-       p.description,
-       o.organization_name,
-       COALESCE(
-         array_agg(c.category_name)
-           FILTER (WHERE c.category_name IS NOT NULL),
-         ARRAY[]::varchar[]
-       ) AS categories
+        p.project_id,
+        p.project_name,
+        p.description,
+        p.location,
+        p.project_date,
+        o.organization_name,
+        COALESCE(
+          array_agg(c.category_name)
+            FILTER (WHERE c.category_name IS NOT NULL),
+          ARRAY[]::varchar[]
+        ) AS categories
      FROM projects p
      LEFT JOIN organizations o
        ON p.organization_id = o.organization_id
