@@ -1,13 +1,11 @@
-
 import "dotenv/config";
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { getOrganizations } from "./src/models/organizations.js";
-import { getProjects } from "./src/models/projects.js";
-import { getCategories } from "./src/models/categories.js";
-import pool from "./src/models/database.js";
+import organizationRoutes from "./src/routes/organizations.js";
+import projectRoutes from "./src/routes/projects.js";
+import categoryRoutes from "./src/routes/categories.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,48 +16,15 @@ app.use(express.static(path.join(dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(dirname, "src", "views"));
 
+// Home page
 app.get("/", (req, res) => {
   res.render("home", { title: "Home" });
 });
 
-app.get("/organizations", async (req, res, next) => {
-  try {
-    const organizations = await getOrganizations();
-    res.render("organizations", {
-      title: "Organizations",
-      organizations,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.get("/projects", async (req, res, next) => {
-  try {
-    const projects = await getProjects();
-    res.render("projects", {
-      title: "Service Projects",
-      projects,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.get("/categories", async (req, res, next) => {
-  try {
-    const categories = await getCategories();
-    res.render("categories", {
-      title: "Service Project Categories",
-      categories,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
+// Database health check
 app.get("/health", async (req, res) => {
   try {
+    const { default: pool } = await import("./src/models/database.js");
     await pool.query("SELECT 1");
     res.send("Database connection successful.");
   } catch (error) {
@@ -68,13 +33,29 @@ app.get("/health", async (req, res) => {
   }
 });
 
-app.use((error, req, res, next) => {
-  console.error(error);
-  res.status(500).send("Server error. Check the VS Code terminal.");
+// MVC routes
+app.use("/organizations", organizationRoutes);
+app.use("/organization", organizationRoutes);
+
+app.use("/projects", projectRoutes);
+app.use("/project", projectRoutes);
+
+app.use("/categories", categoryRoutes);
+app.use("/category", categoryRoutes);
+
+// 404 error handler
+app.use((req, res) => {
+  res.status(404).render("errors/404", {
+    title: "Page Not Found",
+  });
 });
 
-app.use((req, res) => {
-  res.status(404).send("Page not found");
+// 500 error handler
+app.use((error, req, res, next) => {
+  console.error(error);
+  res.status(500).render("errors/500", {
+    title: "Server Error",
+  });
 });
 
 app.listen(port, () => {

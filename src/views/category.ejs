@@ -1,0 +1,36 @@
+<%- include('partials/header', { title: title }) %>
+
+<main class="page-content">
+  <section class="page-intro">
+    <p class="eyebrow">Explore opportunities</p>
+    <h1><%= category.category_name %></h1>
+    <p>Service projects in this category.</p>
+  </section>
+
+  <section class="card-grid">
+    <% if (projects && projects.length > 0) { %>
+      <% projects.forEach((project) => { %>
+        <article class="card">
+          <h2>
+            <a href="/project/<%= project.project_id %>">
+              <%= project.project_name %>
+            </a>
+          </h2>
+
+          <p><%= project.description || "No description available." %></p>
+          <p>Location: <%= project.location || "Not specified" %></p>
+          <p>
+            Date:
+            <%= project.project_date
+              ? String(project.project_date).slice(0, 10)
+              : "Not specified" %>
+          </p>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No projects found in this category.</p>
+    <% } %>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

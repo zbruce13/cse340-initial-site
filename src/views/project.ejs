@@ -1,0 +1,58 @@
+<%- include('partials/header', { title: title }) %>
+
+<main class="page-content">
+  <section class="page-intro">
+    <p class="eyebrow">Service opportunity</p>
+    <h1><%= project.project_name %></h1>
+    <p><%= project.description || "No description available." %></p>
+  </section>
+
+  <section class="card-grid">
+    <article class="card">
+      <h2>Project Information</h2>
+
+      <p>
+        Location:
+        <%= project.location || "Not specified" %>
+      </p>
+
+      <p>
+        Date:
+        <%= project.project_date
+          ? String(project.project_date).slice(0, 10)
+          : "Not specified" %>
+      </p>
+
+      <p>
+        Partner Organization:
+        <% if (project.organization_id) { %>
+          <a href="/organization/<%= project.organization_id %>">
+            <%= project.organization_name %>
+          </a>
+        <% } else { %>
+          Unassigned
+        <% } %>
+      </p>
+    </article>
+  </section>
+
+  <section class="page-intro">
+    <h2>Project Categories</h2>
+  </section>
+
+  <section class="card-grid">
+    <% if (categories && categories.length > 0) { %>
+      <% categories.forEach((category) => { %>
+        <article class="card">
+          <a href="/category/<%= category.category_id %>">
+            <%= category.category_name %>
+          </a>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No categories assigned to this project.</p>
+    <% } %>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

@@ -11,13 +11,25 @@
     <% if (projects && projects.length > 0) { %>
       <% projects.forEach((project) => { %>
         <article class="card">
-          <h2><%= project.project_name %></h2>
+          <h2>
+            <a href="/project/<%= project.project_id %>">
+              <%= project.project_name %>
+            </a>
+          </h2>
 
-          <p><%= project.description || "No description available." %></p>
+          <p>
+            <%= project.description || "No description available." %>
+          </p>
 
           <p>
             Organization:
-            <%= project.organization_name || "Unassigned" %>
+            <% if (project.organization_id) { %>
+              <a href="/organization/<%= project.organization_id %>">
+                <%= project.organization_name %>
+              </a>
+            <% } else { %>
+              Unassigned
+            <% } %>
           </p>
 
           <p>
@@ -27,19 +39,14 @@
 
           <p>
             Project Date:
-            <%= project.project_date ? String(project.project_date).slice(0, 10) : "Not specified" %>
-          </p>
-
-          <p>
-            Categories:
-            <%= Array.isArray(project.categories)
-              ? project.categories.join(", ")
-              : "None" %>
+            <%= project.project_date
+              ? String(project.project_date).slice(0, 10)
+              : "Not specified" %>
           </p>
         </article>
       <% }); %>
     <% } else { %>
-      <p>No projects found.</p>
+      <p>No upcoming projects found.</p>
     <% } %>
   </section>
 </main>

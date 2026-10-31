@@ -18,9 +18,15 @@
             >
           <% } %>
 
-          <h2><%= organization.organization_name %></h2>
+          <h2>
+            <a href="/organization/<%= organization.organization_id %>">
+              <%= organization.organization_name %>
+            </a>
+          </h2>
 
-          <p><%= organization.description || "No description available." %></p>
+          <p>
+            <%= organization.description || "No description available." %>
+          </p>
 
           <% if (organization.contact_email) { %>
             <p>
