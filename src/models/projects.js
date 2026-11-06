@@ -1,3 +1,4 @@
+
 import pool from "./database.js";
 
 // Get all projects
@@ -81,9 +82,61 @@ const getUpcomingProjects = async () => {
   return result.rows;
 };
 
+// Create a new project
+const createProject = async (
+  projectName,
+  description,
+  organizationId,
+  location,
+  projectDate
+) => {
+  const result = await pool.query(
+    `INSERT INTO projects
+      (project_name, description, organization_id, location, project_date)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+    [projectName, description, organizationId, location, projectDate]
+  );
+
+  return result.rows[0];
+};
+
+// Update an existing project
+const updateProject = async (
+  projectId,
+  projectName,
+  description,
+  organizationId,
+  location,
+  projectDate
+) => {
+  const result = await pool.query(
+    `UPDATE projects
+     SET project_name = $1,
+         description = $2,
+         organization_id = $3,
+         location = $4,
+         project_date = $5
+     WHERE project_id = $6
+     RETURNING *`,
+    [
+      projectName,
+      description,
+      organizationId,
+      location,
+      projectDate,
+      projectId,
+    ]
+  );
+
+  return result.rows[0];
+};
+
 export {
   getProjects,
   getProjectById,
   getProjectsByOrganizationId,
   getUpcomingProjects,
+  createProject,
+  updateProject,
 };

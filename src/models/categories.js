@@ -1,3 +1,4 @@
+
 import pool from "./database.js";
 
 // Get all categories
@@ -58,9 +59,70 @@ const getProjectsByCategoryId = async (categoryId) => {
   return result.rows;
 };
 
+// Create a new category
+const createCategory = async (categoryName) => {
+  const result = await pool.query(
+    `INSERT INTO categories (category_name)
+     VALUES ($1)
+     RETURNING *`,
+    [categoryName]
+  );
+
+  return result.rows[0];
+};
+
+// Update an existing category
+const updateCategory = async (categoryId, categoryName) => {
+  const result = await pool.query(
+    `UPDATE categories
+     SET category_name = $1
+     WHERE category_id = $2
+     RETURNING *`,
+    [categoryName, categoryId]
+  );
+
+  return result.rows[0];
+};
+
+// Update the categories assigned to a project
+const updateProjectCategories = async (projectId, categoryIds) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    // Remove previous category assignments
+    await client.query(
+      `DELETE FROM project_categories
+       WHERE project_id = $1`,
+      [projectId]
+    );
+
+    // Add the newly selected categories
+    for (const categoryId of categoryIds) {
+      await client.query(
+        `INSERT INTO project_categories
+          (project_id, category_id)
+         VALUES ($1, $2)`,
+        [projectId, categoryId]
+      );
+    }
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
 export {
   getCategories,
   getCategoryById,
   getCategoriesByProjectId,
   getProjectsByCategoryId,
+  createCategory,
+  updateCategory,
+  updateProjectCategories,
 };

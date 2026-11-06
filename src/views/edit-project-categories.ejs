@@ -1,0 +1,47 @@
+
+<%- include("partials/header", { title: title }) %>
+
+<main class="page-content">
+  <section class="page-intro">
+    <p class="eyebrow">PROJECT MANAGEMENT</p>
+    <h1>Edit Project Categories</h1>
+    <p>Choose the categories that apply to this project:</p>
+    <h2><%= project.project_name %></h2>
+  </section>
+
+  <form
+    action="/projects/edit-project-categories/<%= project.project_id %>"
+    method="POST"
+  >
+    <section class="card-grid">
+      <% if (categories && categories.length > 0) { %>
+        <% categories.forEach((category) => { %>
+          <article class="card">
+            <label for="category-<%= category.category_id %>">
+              <input
+                type="checkbox"
+                id="category-<%= category.category_id %>"
+                name="category_ids"
+                value="<%= category.category_id %>"
+                <%= assignedCategoryIds.includes(String(category.category_id)) ? "checked" : "" %>
+              >
+              <%= category.category_name %>
+            </label>
+          </article>
+        <% }) %>
+      <% } else { %>
+        <p>No categories are available. Create a category first.</p>
+      <% } %>
+    </section>
+
+    <button type="submit">Save Categories</button>
+  </form>
+
+  <p>
+    <a href="/projects/<%= project.project_id %>">
+      Back to Project
+    </a>
+  </p>
+</main>
+
+<%- include("partials/footer") %>

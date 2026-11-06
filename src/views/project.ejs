@@ -1,3 +1,4 @@
+
 <%- include('partials/header', { title: title }) %>
 
 <main class="page-content">
@@ -5,24 +6,30 @@
     <p class="eyebrow">Service opportunity</p>
     <h1><%= project.project_name %></h1>
     <p><%= project.description || "No description available." %></p>
+
+    <p>
+      <a href="/projects/edit/<%= project.project_id %>">
+        Edit Project
+      </a>
+    </p>
+
+    <p>
+      <a href="/projects/edit-project-categories/<%= project.project_id %>">
+        Edit Project Categories
+      </a>
+    </p>
   </section>
 
   <section class="card-grid">
     <article class="card">
       <h2>Project Information</h2>
-
-      <p>
-        Location:
-        <%= project.location || "Not specified" %>
-      </p>
-
+      <p>Location: <%= project.location || "Not specified" %></p>
       <p>
         Date:
         <%= project.project_date
           ? String(project.project_date).slice(0, 10)
           : "Not specified" %>
       </p>
-
       <p>
         Partner Organization:
         <% if (project.organization_id) { %>

@@ -1,5 +1,8 @@
+
 import "dotenv/config";
 import express from "express";
+import session from "express-session";
+import flash from "connect-flash";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,8 +14,34 @@ const app = express();
 const port = process.env.PORT || 3000;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Static files and form data
 app.use(express.static(path.join(dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
 
+// Session configuration
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "cse340-development-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60,
+    },
+  })
+);
+
+// Flash messages
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash("success");
+  res.locals.error_msg = req.flash("error");
+  next();
+});
+
+// EJS configuration
 app.set("view engine", "ejs");
 app.set("views", path.join(dirname, "src", "views"));
 
@@ -33,15 +62,17 @@ app.get("/health", async (req, res) => {
   }
 });
 
-// MVC routes
+// Organization routes
 app.use("/organizations", organizationRoutes);
 app.use("/organization", organizationRoutes);
 
+// Project routes
 app.use("/projects", projectRoutes);
 app.use("/project", projectRoutes);
 
-app.use("/categories", categoryRoutes);
-app.use("/category", categoryRoutes);
+// Category routes
+// These are mounted at the root to match the assignment URLs.
+app.use("/", categoryRoutes);
 
 // 404 error handler
 app.use((req, res) => {
@@ -58,6 +89,7 @@ app.use((error, req, res, next) => {
   });
 });
 
+// Start server
 app.listen(port, () => {
   console.log(`Website running at http://localhost:${port}`);
 });

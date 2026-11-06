@@ -1,3 +1,4 @@
+
 <%- include("partials/header", { title: title }) %>
 
 <main class="page-content">
@@ -5,7 +6,27 @@
     <p class="eyebrow">FIND YOUR PASSION</p>
     <h1><%= title %></h1>
     <p>Explore different ways to make a meaningful difference.</p>
+
+    <p>
+      <a href="/new-category" class="button">Add New Category</a>
+    </p>
   </section>
+
+  <% if (success_msg && success_msg.length > 0) { %>
+    <ul class="success-list">
+      <% success_msg.forEach((message) => { %>
+        <li><%= message %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <% if (error_msg && error_msg.length > 0) { %>
+    <ul class="error-list">
+      <% error_msg.forEach((message) => { %>
+        <li><%= message %></li>
+      <% }) %>
+    </ul>
+  <% } %>
 
   <section class="card-grid">
     <% if (categories && categories.length > 0) { %>
@@ -20,6 +41,12 @@
               <%= category.category_name %>
             </a>
           </h2>
+
+          <p>
+            <a href="/edit-category/<%= category.category_id %>">
+              Edit Category
+            </a>
+          </p>
         </article>
       <% }); %>
     <% } else { %>
