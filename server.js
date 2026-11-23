@@ -18,6 +18,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Trust Render's HTTPS proxy
+app.set("trust proxy", 1);
+
 // Static files and form data
 app.use(express.static(path.join(dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -29,7 +32,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: "auto",
       httpOnly: true,
       maxAge: 1000 * 60 * 60,
     },
