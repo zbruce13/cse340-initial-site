@@ -1,0 +1,28 @@
+
+<%- include("partials/header", { title: "Registered Users" }) %>
+
+<main class="page-content">
+  <section class="page-intro">
+    <p class="eyebrow">ADMINISTRATION</p>
+    <h1>Registered Users</h1>
+    <p>View the users registered on the Service Network.</p>
+  </section>
+
+  <section class="card-grid">
+    <% if (users && users.length > 0) { %>
+      <% users.forEach((user) => { %>
+        <article class="card">
+          <h2><%= user.user_name %></h2>
+          <p>Email: <%= user.user_email %></p>
+          <p>Role: <%= user.user_role %></p>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No registered users found.</p>
+    <% } %>
+  </section>
+
+  <p><a href="/account">Back to Dashboard</a></p>
+</main>
+
+<%- include("partials/footer") %>

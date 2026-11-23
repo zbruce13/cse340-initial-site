@@ -1,0 +1,28 @@
+
+<%- include("partials/header") %>
+
+<main class="container">
+  <h1>Login</h1>
+
+  <% if (errors && errors.length) { %>
+    <ul class="error-list">
+      <% errors.forEach(error => { %>
+        <li><%= error %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <form action="/account/login" method="POST">
+    <label for="user_email">Email</label>
+    <input type="email" id="user_email" name="user_email" required>
+
+    <label for="user_password">Password</label>
+    <input type="password" id="user_password" name="user_password" required>
+
+    <button type="submit">Log In</button>
+  </form>
+
+  <p>Don't have an account? <a href="/account/register">Register here</a>.</p>
+</main>
+
+<%- include("partials/footer") %>

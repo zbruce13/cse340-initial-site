@@ -9,6 +9,10 @@ import { fileURLToPath } from "node:url";
 import organizationRoutes from "./src/routes/organizations.js";
 import projectRoutes from "./src/routes/projects.js";
 import categoryRoutes from "./src/routes/categories.js";
+import accountRoutes from "./src/routes/account.js";
+
+import { getAllUsers } from "./src/models/users.js";
+import { requireRole } from "./src/middleware/auth.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,7 +39,9 @@ app.use(
 // Flash messages
 app.use(flash());
 
+// Make user information and messages available to EJS
 app.use((req, res, next) => {
+  res.locals.currentUser = req.session.user || null;
   res.locals.success_msg = req.flash("success");
   res.locals.error_msg = req.flash("error");
   next();
@@ -62,6 +68,23 @@ app.get("/health", async (req, res) => {
   }
 });
 
+// Authentication routes
+app.use("/account", accountRoutes);
+
+// Registered users page (admin only)
+app.get("/users", requireRole("admin"), async (req, res, next) => {
+  try {
+    const users = await getAllUsers();
+
+    res.render("users", {
+      title: "Registered Users",
+      users,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Organization routes
 app.use("/organizations", organizationRoutes);
 app.use("/organization", organizationRoutes);
@@ -71,7 +94,6 @@ app.use("/projects", projectRoutes);
 app.use("/project", projectRoutes);
 
 // Category routes
-// These are mounted at the root to match the assignment URLs.
 app.use("/", categoryRoutes);
 
 // 404 error handler

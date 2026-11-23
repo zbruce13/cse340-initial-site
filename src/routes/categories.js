@@ -10,9 +10,11 @@ import {
   updateExistingCategory,
 } from "../controllers/categories.js";
 
+import { requireRole } from "../middleware/auth.js";
+
 const router = express.Router();
 
-// Category list and details
+// Category list and details (available to everyone)
 router.get("/categories", buildCategories);
 router.get("/categories/:id", buildCategoryDetails);
 
@@ -20,12 +22,12 @@ router.get("/categories/:id", buildCategoryDetails);
 router.get("/category", buildCategories);
 router.get("/category/:id", buildCategoryDetails);
 
-// Create category
-router.get("/new-category", buildNewCategory);
-router.post("/new-category", createNewCategory);
+// Create category (admin only)
+router.get("/new-category", requireRole("admin"), buildNewCategory);
+router.post("/new-category", requireRole("admin"), createNewCategory);
 
-// Edit category
-router.get("/edit-category/:id", buildEditCategory);
-router.post("/edit-category/:id", updateExistingCategory);
+// Edit category (admin only)
+router.get("/edit-category/:id", requireRole("admin"), buildEditCategory);
+router.post("/edit-category/:id", requireRole("admin"), updateExistingCategory);
 
 export default router;

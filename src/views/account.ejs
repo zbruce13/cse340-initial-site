@@ -1,0 +1,19 @@
+
+<%- include("partials/header") %>
+
+<main class="container">
+  <h1>Dashboard</h1>
+
+  <p>Welcome, <%= user.user_name %>!</p>
+  <p>Email: <%= user.user_email %></p>
+  <p>Role: <%= user.user_role %></p>
+
+  <% if (user.user_role === "admin") { %>
+    <h2>Administration</h2>
+    <p><a href="/users">View Registered Users</a></p>
+  <% } %>
+
+  <p><a href="/account/logout">Log Out</a></p>
+</main>
+
+<%- include("partials/footer") %>
