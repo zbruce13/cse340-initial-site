@@ -1,3 +1,4 @@
+
 <%- include('partials/header', { title: title }) %>
 
 <main class="page-content">
@@ -5,6 +6,12 @@
     <p class="eyebrow">Take action</p>
     <h1><%= title %></h1>
     <p>Explore opportunities to serve your community.</p>
+
+    <% if (currentUser && currentUser.user_role === "admin") { %>
+      <a href="/projects/new" class="button">
+        Add Service Project
+      </a>
+    <% } %>
   </section>
 
   <section class="card-grid">
@@ -12,7 +19,7 @@
       <% projects.forEach((project) => { %>
         <article class="card">
           <h2>
-            <a href="/project/<%= project.project_id %>">
+            <a href="/projects/<%= project.project_id %>">
               <%= project.project_name %>
             </a>
           </h2>
@@ -24,7 +31,7 @@
           <p>
             Organization:
             <% if (project.organization_id) { %>
-              <a href="/organization/<%= project.organization_id %>">
+              <a href="/organizations/<%= project.organization_id %>">
                 <%= project.organization_name %>
               </a>
             <% } else { %>

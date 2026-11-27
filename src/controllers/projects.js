@@ -1,4 +1,6 @@
 
+import { validationResult } from "express-validator";
+
 import {
   getProjectById,
   getUpcomingProjects,
@@ -16,17 +18,9 @@ import {
   getOrganizations,
 } from "../models/organizations.js";
 
-// Validate project information
+// Validate additional project information
 const validateProject = (project, organizations) => {
   const errors = [];
-
-  if (!project.project_name) {
-    errors.push("Project name is required.");
-  } else if (project.project_name.length < 3) {
-    errors.push("Project name must be at least 3 characters.");
-  } else if (project.project_name.length > 150) {
-    errors.push("Project name cannot exceed 150 characters.");
-  }
 
   if (!project.description) {
     errors.push("Project description is required.");
@@ -125,7 +119,7 @@ const buildNewProject = async (req, res, next) => {
 // Process new project form
 const createNewProject = async (req, res, next) => {
   const project = {
-    project_name: req.body.project_name?.trim() || "",
+    project_name: req.body.project_name || "",
     description: req.body.description?.trim() || "",
     organization_id: req.body.organization_id || "",
     location: req.body.location?.trim() || "",
@@ -134,7 +128,15 @@ const createNewProject = async (req, res, next) => {
 
   try {
     const organizations = await getOrganizations();
-    const errors = validateProject(project, organizations);
+
+    const validationErrors = validationResult(req).array().map(
+      (error) => error.msg
+    );
+
+    const errors = [
+      ...validationErrors,
+      ...validateProject(project, organizations),
+    ];
 
     if (errors.length > 0) {
       return res.status(400).render("new-project", {
@@ -199,7 +201,7 @@ const buildEditProject = async (req, res, next) => {
 const updateExistingProject = async (req, res, next) => {
   const project = {
     project_id: req.params.id,
-    project_name: req.body.project_name?.trim() || "",
+    project_name: req.body.project_name || "",
     description: req.body.description?.trim() || "",
     organization_id: req.body.organization_id || "",
     location: req.body.location?.trim() || "",
@@ -208,7 +210,15 @@ const updateExistingProject = async (req, res, next) => {
 
   try {
     const organizations = await getOrganizations();
-    const errors = validateProject(project, organizations);
+
+    const validationErrors = validationResult(req).array().map(
+      (error) => error.msg
+    );
+
+    const errors = [
+      ...validationErrors,
+      ...validateProject(project, organizations),
+    ];
 
     if (errors.length > 0) {
       return res.status(400).render("edit-project", {

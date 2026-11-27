@@ -1,4 +1,6 @@
 
+import { validationResult } from "express-validator";
+
 import {
   getOrganizations,
   getOrganizationById,
@@ -10,17 +12,9 @@ import {
   getProjectsByOrganizationId,
 } from "../models/projects.js";
 
-// Validate organization information
+// Validate additional organization information
 const validateOrganization = (organization) => {
   const errors = [];
-
-  if (!organization.organization_name) {
-    errors.push("Organization name is required.");
-  } else if (organization.organization_name.length < 3) {
-    errors.push("Organization name must be at least 3 characters.");
-  } else if (organization.organization_name.length > 150) {
-    errors.push("Organization name cannot exceed 150 characters.");
-  }
 
   if (organization.contact_email) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -91,13 +85,20 @@ const buildNewOrganization = (req, res) => {
 // Process new organization form
 const createNewOrganization = async (req, res, next) => {
   const organization = {
-    organization_name: req.body.organization_name?.trim() || "",
+    organization_name: req.body.organization_name || "",
     description: req.body.description?.trim() || "",
     contact_email: req.body.contact_email?.trim() || "",
     logo_filename: req.body.logo_filename?.trim() || "",
   };
 
-  const errors = validateOrganization(organization);
+  const validationErrors = validationResult(req).array().map(
+    (error) => error.msg
+  );
+
+  const errors = [
+    ...validationErrors,
+    ...validateOrganization(organization),
+  ];
 
   if (errors.length > 0) {
     return res.status(400).render("new-organization", {
@@ -155,13 +156,20 @@ const buildEditOrganization = async (req, res, next) => {
 const updateExistingOrganization = async (req, res, next) => {
   const organization = {
     organization_id: req.params.id,
-    organization_name: req.body.organization_name?.trim() || "",
+    organization_name: req.body.organization_name || "",
     description: req.body.description?.trim() || "",
     contact_email: req.body.contact_email?.trim() || "",
     logo_filename: req.body.logo_filename?.trim() || "",
   };
 
-  const errors = validateOrganization(organization);
+  const validationErrors = validationResult(req).array().map(
+    (error) => error.msg
+  );
+
+  const errors = [
+    ...validationErrors,
+    ...validateOrganization(organization),
+  ];
 
   if (errors.length > 0) {
     return res.status(400).render("edit-organization", {

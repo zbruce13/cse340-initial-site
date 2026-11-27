@@ -1,5 +1,7 @@
 
 import bcrypt from "bcryptjs";
+import { validationResult } from "express-validator";
+
 import {
   getUserByEmail,
   registerUser,
@@ -25,20 +27,15 @@ export function buildRegister(req, res) {
 
 // Register a new user
 export async function registerAccount(req, res, next) {
-  const name = (req.body.user_name || "").trim();
+  const name = req.body.user_name || "";
   const email = (req.body.user_email || "").trim().toLowerCase();
   const password = req.body.user_password || "";
-  const errors = [];
 
-  if (!name) errors.push("Name is required.");
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.push("Enter a valid email address.");
-  }
-  if (password.length < 8) {
-    errors.push("Password must be at least 8 characters.");
-  }
+  const errors = validationResult(req).array().map(
+    (error) => error.msg
+  );
 
-  if (errors.length) {
+  if (errors.length > 0) {
     return res.status(400).render("register", {
       title: "Register",
       errors,
@@ -74,6 +71,17 @@ export async function loginAccount(req, res, next) {
   const email = (req.body.user_email || "").trim().toLowerCase();
   const password = req.body.user_password || "";
 
+  const errors = validationResult(req).array().map(
+    (error) => error.msg
+  );
+
+  if (errors.length > 0) {
+    return res.status(400).render("login", {
+      title: "Login",
+      errors,
+    });
+  }
+
   try {
     const user = await getUserByEmail(email);
 
@@ -93,6 +101,7 @@ export async function loginAccount(req, res, next) {
       };
 
       req.flash("success", `Welcome, ${user.user_name}!`);
+
       req.session.save((saveError) => {
         if (saveError) return next(saveError);
         res.redirect("/account");

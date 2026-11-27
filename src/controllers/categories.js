@@ -1,3 +1,4 @@
+import { validationResult } from "express-validator";
 
 import {
   getCategories,
@@ -56,21 +57,13 @@ const buildNewCategory = (req, res) => {
 
 // Process new category form
 const createNewCategory = async (req, res, next) => {
-  const categoryName = (req.body.category_name || "").trim();
-  const errors = [];
+  const errors = validationResult(req);
+  const categoryName = req.body.category_name;
 
-  if (!categoryName) {
-    errors.push("Category name is required.");
-  } else if (categoryName.length < 3) {
-    errors.push("Category name must be at least 3 characters.");
-  } else if (categoryName.length > 100) {
-    errors.push("Category name cannot exceed 100 characters.");
-  }
-
-  if (errors.length > 0) {
+  if (!errors.isEmpty()) {
     return res.status(400).render("new-category", {
       title: "Add Category",
-      errors,
+      errors: errors.array().map((error) => error.msg),
       category_name: categoryName,
     });
   }
@@ -116,41 +109,29 @@ const buildEditCategory = async (req, res, next) => {
 
 // Process edit category form
 const updateExistingCategory = async (req, res, next) => {
-  const categoryName = (req.body.category_name || "").trim();
+  const errors = validationResult(req);
+  const categoryName = req.body.category_name;
   const categoryId = req.params.id;
-  const errors = [];
 
-  if (!categoryName) {
-    errors.push("Category name is required.");
-  } else if (categoryName.length < 3) {
-    errors.push("Category name must be at least 3 characters.");
-  } else if (categoryName.length > 100) {
-    errors.push("Category name cannot exceed 100 characters.");
-  }
+  try {
+    const category = await getCategoryById(categoryId);
 
-  if (errors.length > 0) {
-    try {
-      const category = await getCategoryById(categoryId);
+    if (!category) {
+      return res.status(404).render("errors/404", {
+        title: "Page Not Found",
+      });
+    }
 
-      if (!category) {
-        return res.status(404).render("errors/404", {
-          title: "Page Not Found",
-        });
-      }
-
+    if (!errors.isEmpty()) {
       category.category_name = categoryName;
 
       return res.status(400).render("edit-category", {
         title: "Edit Category",
         category,
-        errors,
+        errors: errors.array().map((error) => error.msg),
       });
-    } catch (error) {
-      return next(error);
     }
-  }
 
-  try {
     await updateCategory(categoryId, categoryName);
 
     req.flash("success", "Category updated successfully!");
